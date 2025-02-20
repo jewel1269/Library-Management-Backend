@@ -1,23 +1,42 @@
 const Book = require('../models/bookModel');
 
+
 const addBook = async (req, res) => {
-  const { title, author, ISBN, totalCopies, genre } = req.body;
-  const newBook = new Book({ title, author, ISBN, totalCopies, availableCopies: totalCopies, genre });
   try {
+    const { title, author, isbn, quantity, price, publisher, dateReceived, description, cover } = req.body;
+    
+    const newBook = new Book({ 
+      title, 
+      author, 
+      isbn, 
+      quantity, 
+      availableCopies: quantity, 
+      price, 
+      publisher, 
+      dateReceived, 
+      description, 
+      cover 
+    });
+    console.log(newBook);
+
     await newBook.save();
-    res.status(201).send({
+
+    res.status(201).json({
       success: true,
       message: 'Book added successfully',
       data: newBook
     });
+
   } catch (error) {
-    res.status(400).send({
+    console.error("Error adding book:", error); 
+    res.status(400).json({
       success: false,
       message: 'Could not add book',
-      error
+      error: error.message
     });
   }
 };
+
 
 const getBooks = async (req, res) => {
   try {
@@ -38,20 +57,17 @@ const getBooks = async (req, res) => {
 
 const getFilteredBook = async (req, res) => {
   try {
-    const { title, genre, author, borrowedCount } = req.query;
+    const { title, author, borrowedCount } = req.query;
     let filter = {};
 
     if (title) {
-      filter.title = { $regex: title, $options: 'i' }; // Case-insensitive search
-    }
-    if (genre) {
-      filter.genre = { $regex: genre, $options: 'i' };
+      filter.title = { $regex: title, $options: 'i' }; 
     }
     if (author) {
       filter.author = { $regex: author, $options: 'i' };
     }
     if (borrowedCount) {
-      filter.borrowedCount = { $gte: Number(borrowedCount) }; // Get books borrowed at least X times
+      filter.borrowedCount = { $gte: Number(borrowedCount) }; 
     }
 
     const books = await Book.find(filter);

@@ -1,4 +1,4 @@
-const LOAN_PERIOD = 14; // 14 days
+const LOAN_PERIOD = 14; 
 const JWT_EXPIRED = '7d';
 const STATUS = {
   BORROWED: 'borrowed',
