@@ -12,17 +12,13 @@ dotenv.config();
 
 const app = express();
 dotenv.config();
-
 // Connect to MongoDB
 const URI = process.env.MONGO_URI;
-
 connectDB(URI);
-
 app.use(express.json());
 app.use(cors({
   origin:["http://localhost:5173", "http://localhost:3000"]
 }))
-
 // Routes
 app.use("/api/user", userRoutes);
 app.use("/api/admin", adminRoutes);

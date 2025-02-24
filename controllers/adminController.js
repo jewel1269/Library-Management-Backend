@@ -8,7 +8,7 @@ const registerAdmin = async (req, res) => {
     const { name, email, password } = req.body;
     console.log(name, email);
     const hashedPassword = await bcrypt.hash(password, 10);
-  
+
     const exitAdmin = await Admin.findOne({ email });
     if (exitAdmin) {
       return res.status(400).send({
@@ -76,4 +76,26 @@ const loginAdmin = async (req, res) => {
   }
 };
 
-module.exports = { registerAdmin, loginAdmin };
+const findAdmin = async (req, res) => {
+  try {
+    const admin = await Admin.findById(req.user.id).select("-password");
+    if (!admin) {
+      return res.status(404).send({
+        success: false,
+        message: "Admin not found",
+      });
+    }
+    res.status(200).send({
+      success: true,
+      data: admin,
+    });
+  } catch (error) {
+    res.status(500).send({
+      success: false,
+      message: "Admin not found",
+      error,
+    });
+  }
+};
+
+module.exports = { registerAdmin, loginAdmin, findAdmin };
